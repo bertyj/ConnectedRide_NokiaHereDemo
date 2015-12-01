@@ -13,8 +13,14 @@ import com.here.android.mpa.mapping.Map;
 import com.here.android.mpa.mapping.Map.Animation;
 import com.here.android.mpa.mapping.MapFragment;
 import com.here.android.mpa.mapping.MapMarker;
+import com.here.android.mpa.mapping.MapRoute;
+import com.here.android.mpa.routing.RouteManager;
+import com.here.android.mpa.routing.RouteOptions;
+import com.here.android.mpa.routing.RoutePlan;
+import com.here.android.mpa.routing.RouteResult;
 
 import java.io.IOException;
+import java.util.List;
 
 public class MainActivity extends Activity {
     private Map map;
@@ -76,13 +82,44 @@ public class MainActivity extends Activity {
                     cl.addMarker(mmEndPoint);
 
                     map.addClusterLayer(cl);
+
+                    RouteManager rm = new RouteManager();
+                    RoutePlan routePlan = new RoutePlan();
+                    routePlan.addWaypoint(startPoint);
+                    routePlan.addWaypoint(endPoint);
+                    RouteOptions routeOptions = new RouteOptions();
+                    routeOptions.setTransportMode(RouteOptions.TransportMode.CAR);
+                    routeOptions.setRouteType(RouteOptions.Type.FASTEST);
+                    routePlan.setRouteOptions(routeOptions);
+                    rm.calculateRoute(routePlan, new RouteListener());
                     map.setZoomLevel((map.getMaxZoomLevel() + map.getMinZoomLevel()) / 2);
-                    // map.setZoomLevel(map.getMinZoomLevel());
                 }
                 else {
                     Toast.makeText(MainActivity.this, "Map Engine Initialization Fail", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    private class RouteListener implements RouteManager.Listener {
+        // Method defined in Listener
+        @Override
+        public void onProgress(int percentage) {
+            // Display a message indicating calculation progress
+        }
+
+        // Method defined in Listener
+        @Override
+        public void onCalculateRouteFinished(RouteManager.Error error, List<RouteResult> routeResult) {
+            // If the route was calculated successfully
+            if (error == RouteManager.Error.NONE) {
+                // Render the route on the map
+                MapRoute mapRoute = new MapRoute(routeResult.get(0).getRoute());
+                map.addMapObject(mapRoute);
+            }
+            else {
+                // Display a message indicating route calculation failure
+            }
+        }
     }
 }
