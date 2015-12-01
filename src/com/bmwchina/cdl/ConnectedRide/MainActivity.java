@@ -33,20 +33,48 @@ public class MainActivity extends Activity {
                 if (error == Error.NONE) {
                     Toast.makeText(MainActivity.this, "Map Engine Initialization Success", Toast.LENGTH_LONG).show();
                     map = mapFragment.getMap();
+                    ClusterLayer cl = new ClusterLayer();
                     GeoCoordinate location = new GeoCoordinate(49.196261, -123.004773);
+                    GeoCoordinate startPoint = new GeoCoordinate(49.1966286, -123.0053635);
+                    GeoCoordinate endPoint = new GeoCoordinate(49.1947289, -123.1762924);
                     map.setCenter(location, Animation.BOW);
-                    MapMarker mm = new MapMarker();
-                    Image markerImage = new Image();
+                    MapMarker mmLocation = new MapMarker();
+                    Image markerLocation = new Image();
                     try {
-                        markerImage.setImageResource(R.drawable.marker);
+                        markerLocation.setImageResource(R.drawable.gasmarker);
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    mm.setIcon(markerImage);
-                    mm.setCoordinate(location);
-                    ClusterLayer cl = new ClusterLayer();
-                    cl.addMarker(mm);
+                    mmLocation.setIcon(markerLocation);
+                    mmLocation.setCoordinate(location);
+
+                    MapMarker mmStartPoint = new MapMarker();
+                    Image markerStartPoint = new Image();
+                    try {
+                        markerStartPoint.setImageResource(R.drawable.usermarker);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    mmStartPoint.setIcon(markerStartPoint);
+                    mmStartPoint.setCoordinate(startPoint);
+
+                    MapMarker mmEndPoint = new MapMarker();
+                    Image markerEndPoint = new Image();
+                    try {
+                        markerEndPoint.setImageResource(R.drawable.bikemarker);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    mmEndPoint.setIcon(markerEndPoint);
+                    mmEndPoint.setCoordinate(endPoint);
+
+                    cl.addMarker(mmLocation);
+                    cl.addMarker(mmStartPoint);
+                    cl.addMarker(mmEndPoint);
+
                     map.addClusterLayer(cl);
                     map.setZoomLevel((map.getMaxZoomLevel() + map.getMinZoomLevel()) / 2);
                     // map.setZoomLevel(map.getMinZoomLevel());
